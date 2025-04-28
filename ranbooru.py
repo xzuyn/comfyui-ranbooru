@@ -15,20 +15,18 @@ def pil2tensor(image):
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
 
 class Booru():
-    
     def __init__(self, booru, booru_url):
         self.booru = booru
         self.booru_url = booru_url
         self.headers = {'user-agent': 'my-app/0.0.1'}
-        
+
     def get_data(self,add_tags,max_pages, id=''):
         pass
-    
+
     def get_post(self,add_tags,max_pages, id=''):
         pass
-    
+
 class Gelbooru(Booru):
-    
     def __init__(self, fringe_benefits=True):
         super().__init__('gelbooru', f'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={POST_AMOUNT}')
         self.fringeBenefits = fringe_benefits
@@ -43,16 +41,15 @@ class Gelbooru(Booru):
             res = requests.get(self.booru_url)
         data = res.json()
         return data
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         return self.get_data(add_tags, max_pages, "&id="+id)
-    
-    
+
+
 class XBooru(Booru):
-    
     def __init__(self):
         super().__init__('xbooru', f'https://xbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages, id=''):
         if id:
             add_tags = ''
@@ -62,15 +59,14 @@ class XBooru(Booru):
         for post in data:
             post['file_url'] = f"https://xbooru.com/images/{post['directory']}/{post['image']}"
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         return self.get_data(add_tags, max_pages, "&id="+id)
-    
+
 class Rule34(Booru):
-    
     def __init__(self):
         super().__init__('rule34', f'https://api.rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages,id=''):
         if id:
             add_tags = ''
@@ -78,15 +74,14 @@ class Rule34(Booru):
         res = requests.get(self.booru_url)
         data = res.json()
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         return self.get_data(add_tags, max_pages, "&id="+id)
-    
+
 class Safebooru(Booru):
-    
     def __init__(self):
         super().__init__('safebooru', f'https://safebooru.org/index.php?page=dapi&s=post&q=index&json=1&limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages,id=''):
         if id:
             add_tags = ''
@@ -96,15 +91,14 @@ class Safebooru(Booru):
         for post in data:
             post['file_url'] = f"https://safebooru.org/images/{post['directory']}/{post['image']}"
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         return self.get_data(add_tags, max_pages, "&id="+id)
-    
+
 class Konachan(Booru):
-    
     def __init__(self):
         super().__init__('konachan', f'https://konachan.com/post.json?limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages,id=''):
         if id:
             add_tags = ''
@@ -112,15 +106,14 @@ class Konachan(Booru):
         res = requests.get(self.booru_url)
         data = res.json()
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         raise Exception("Konachan does not support post IDs")
-    
+
 class Yandere(Booru):
-    
     def __init__(self):
         super().__init__('yande.re', f'https://yande.re/post.json?limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages,id=''):
         if id:
             add_tags = ''
@@ -128,15 +121,15 @@ class Yandere(Booru):
         res = requests.get(self.booru_url)
         data = res.json()
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         raise Exception("Yande.re does not support post IDs")
-    
+
 class AIBooru(Booru):
-    
+
     def __init__(self):
         super().__init__('AIBooru', f'https://aibooru.online/posts.json?limit={POST_AMOUNT}')
-                
+
     def get_data(self, add_tags, max_pages,id=''):
         if id:
             add_tags = ''
@@ -146,15 +139,14 @@ class AIBooru(Booru):
         for post in data:
             post['tags'] = post['tag_string']
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         raise Exception("AIBooru does not support post IDs")
-    
+
 class Danbooru(Booru):
-    
     def __init__(self):
         super().__init__('danbooru', f'https://danbooru.donmai.us/posts.json?limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages, id=''):
         if id:
             add_tags = ''
@@ -164,7 +156,7 @@ class Danbooru(Booru):
         for post in data:
             post['tags'] = post['tag_string']
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         self.booru_url = f"https://danbooru.donmai.us/posts/{id}.json"
         res = requests.get(self.booru_url, headers=self.headers)
@@ -172,12 +164,11 @@ class Danbooru(Booru):
         data['tags'] = data['tag_string']
         data = {'post': [data]}
         return data
-    
+
 class e621(Booru):
-    
     def __init__(self):
         super().__init__('danbooru', f'https://e621.net/posts.json?limit={POST_AMOUNT}')
-        
+
     def get_data(self, add_tags, max_pages, id=''):
         if id:
             add_tags = ''
@@ -192,7 +183,7 @@ class e621(Booru):
             post['tags'] = ' '.join(temp_tags)
             post['score'] = post['score']['total']
         return {'post': data}
-    
+
     def get_post(self, add_tags, max_pages, id=''):
         self.get_data(add_tags, max_pages, "&id="+id)
 
@@ -232,7 +223,7 @@ RATINGS = {
     "gelbooru": RATING_TYPES['single']
 }
 
-class Ranbooru:    
+class Ranbooru:
     def __init__(self):
         self.last_prompt = ''
         self.file_url = ''
@@ -240,8 +231,7 @@ class Ranbooru:
 
     @classmethod
     def INPUT_TYPES(cls):
-               
-        return {"required": {       
+        return {"required": {
                     "booru": (BOORUS, {"default": "gelbooru"}),
 					"max_pages": ("INT", {"default": 0, "min": 0, "max": 100, "step": 1, "display": "number"}),
                     "tags": ("STRING", {"multiline": False, "default": ""}),
@@ -255,8 +245,9 @@ class Ranbooru:
     RETURN_TYPES = ("STRING","IMAGE",)
     FUNCTION = "ranbooru"
     CATEGORY = "Ranbooru Nodes"
-    
-    def IS_CHANGED(self, **kwargs):
+
+    @staticmethod
+    def IS_CHANGED(**kwargs):
         return float('nan')
 
     def ranbooru(self, booru, max_pages, tags, rating, change_color, use_last_prompt, return_picture):
@@ -272,7 +263,7 @@ class Ranbooru:
                 'e621': e621(),
             }
         bad_tags = ['mixed-language_text','watermark','text','english_text','speech_bubble','signature','artist_name','censored','bar_censor','translation','twitter_username',"twitter_logo",'patreon_username','commentary_request','tagme','commentary','character_name','mosaic_censoring','instagram_username','text_focus','english_commentary','comic','translation_request','fake_text','translated','paid_reward_available','thought_bubble','multiple_views','silent_comic','out-of-frame_censoring','symbol-only_commentary','3koma','2koma','character_watermark','spoken_question_mark','japanese_text','spanish_text','language_text','fanbox_username','commission','original','ai_generated','stable_diffusion','tagme_(artist)','text_bubble','qr_code','chinese_commentary','korean_text','partial_commentary','chinese_text','copyright_request','heart_censor','censored_nipples','page_number','scan','fake_magazine_cover','korean_commentary']
-        
+
         api_url = ''
         random_post = {'preview_url':''}
         data = {'post': [{'tags': ''}]}
@@ -281,7 +272,7 @@ class Ranbooru:
             img_url = self.file_url
         else:
             api_url = booru_apis.get(booru, Gelbooru())
-            
+
             add_tags = ''
             if tags != '':
                 add_tags = f'&tags=-animated+{tags.replace(",", "+")}'
@@ -321,17 +312,17 @@ class Ranbooru:
                 self.file_url = img_url
                 self.image = img
             return (final_tags, pil2tensor(img),)
-        else:                
+        else:
             empty_image = Image.new('RGB', (1, 1), color = (0, 0, 0))
-            return (final_tags, pil2tensor(empty_image),)        
-    
+            return (final_tags, pil2tensor(empty_image),)
+
 class RanbooruURL:
     """Uses an url or an ID to get a post from a booru"""
     def __init__(self):
         self.last_prompt = ''
         self.file_url = ''
         self.image = None
-        
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -340,7 +331,7 @@ class RanbooruURL:
                     "return_picture": ("BOOLEAN", {"default": False})
                     }
                 }
-    
+
     RETURN_TYPES = ("STRING","IMAGE",)
     FUNCTION = "ranbooru_url"
     CATEGORY = "Ranbooru Nodes"
@@ -354,14 +345,14 @@ class RanbooruURL:
                 'aibooru': AIBooru(),
                 'xbooru': XBooru(),
             }
-        
+
         bad_tags = ['mixed-language_text','watermark','text','english_text','speech_bubble','signature','artist_name','censored','bar_censor','translation','twitter_username',"twitter_logo",'patreon_username','commentary_request','tagme','commentary','character_name','mosaic_censoring','instagram_username','text_focus','english_commentary','comic','translation_request','fake_text','translated','paid_reward_available','thought_bubble','multiple_views','silent_comic','out-of-frame_censoring','symbol-only_commentary','3koma','2koma','character_watermark','spoken_question_mark','japanese_text','spanish_text','language_text','fanbox_username','commission','original','ai_generated','stable_diffusion','tagme_(artist)','text_bubble','qr_code','chinese_commentary','korean_text','partial_commentary','chinese_text','copyright_request','heart_censor','censored_nipples','page_number','scan','fake_magazine_cover','korean_commentary']
-        
+
         api_url = ''
         random_post = {'preview_url':''}
         data = {'post': [{'tags': ''}]}
         api_url = booru_apis.get(booru, Gelbooru())
-        
+
         #check if the id is a number otherwise it's an url
         if url.isdigit():
             add_tags = f'&id={url}'
@@ -382,7 +373,7 @@ class RanbooruURL:
         final_tags = ','.join([tag for tag in temp_tags if tag not in bad_tags])
         self.last_prompt = final_tags
         self.file_url = random_post['file_url']
-        
+
         if return_picture:
             img_url = random_post['file_url']
             res = requests.get(img_url)
@@ -394,17 +385,17 @@ class RanbooruURL:
             self.file_url = img_url
             self.image = img
             return (final_tags, pil2tensor(img),)
-        else:                
+        else:
             empty_image = Image.new('RGB', (1, 1), color = (0, 0, 0))
-            return (final_tags, pil2tensor(empty_image),)    
-        
-        
+            return (final_tags, pil2tensor(empty_image),)
+
+
 class PromptRemove:
     # given a prompt, split it by separator and remove the words in the list based on the input list separated by comma
     # if the word in the list contains a * then it will remove all the words that contain that word
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -413,11 +404,11 @@ class PromptRemove:
                     "remove_tags": ("STRING", {"default": ""}),
                     }
                 }
-        
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "prompt_remove"
     CATEGORY = "Ranbooru Nodes"
-    
+
     def prompt_remove(self, prompt, separator, remove_tags):
         tags = prompt.split(separator)
         if ',' in remove_tags:
@@ -430,12 +421,12 @@ class PromptRemove:
             else:
                 tags = [tag for tag in tags if tag != bad_tag]
         return (separator.join(tags),)
-    
+
 class RandomPicturePath:
     # given a path, return a random picture (png,jpg,jpeg) from that path as a string
     def __init__(self):
         self.last_path = ''
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -444,14 +435,15 @@ class RandomPicturePath:
                     "use_last": ("BOOLEAN", {"default": False}),
                     }
                 }
-    
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "random_picture_path"
     CATEGORY = "Ranbooru Nodes"
-    
-    def IS_CHANGED(self, **kwargs):
+
+    @staticmethod
+    def IS_CHANGED(**kwargs):
         return float('nan')
-    
+
     def random_picture_path(self, path, parse_subfolders, use_last):
         if use_last and self.last_path != '':
             return (self.last_path,)
@@ -467,14 +459,15 @@ class RandomPicturePath:
             random_file = random.choice(files)
             self.last_path = random_file
             return (random_file,)
-    
+
 class PromptMix:
     def __init__(self):
         self.last_prompt = ''
-        
-    def IS_CHANGED(self, **kwargs):
+
+    @staticmethod
+    def IS_CHANGED(**kwargs):
         return float('nan')
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -484,7 +477,7 @@ class PromptMix:
                     "use_last": ("BOOLEAN", {"default": False}),
                     }
                 }
-    
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "prompt_mix"
     CATEGORY = "Ranbooru Nodes"
@@ -501,11 +494,11 @@ class PromptMix:
                 words.reverse()
             self.last_prompt = delimiter.join(words)
             return (self.last_prompt,)
-        
+
 class PromptLimit:
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -514,11 +507,11 @@ class PromptLimit:
                     "limit": ("INT", {"default": 0, "min": 0, "max": 100}),
                     }
                 }
-        
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "prompt_limit"
     CATEGORY = "Ranbooru Nodes"
-    
+
     def prompt_limit(self, prompt, separator, limit):
         """Split the string by separator and limit the amount of words"""
         words = prompt.split(separator)
@@ -529,7 +522,7 @@ class PromptLimit:
 class PromptRandomWeight:
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -541,11 +534,11 @@ class PromptRandomWeight:
                     "order": (["Random","Ordered"], {"default": "Random"}),
                     }
                 }
-        
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "prompt_random_weight"
     CATEGORY = "Ranbooru Nodes"
-    
+
     def prompt_random_weight(self, prompt, separator, min_weight_value, max_weight_value, max_weight_tags, order):
         """Split the string by separator and randomly add (word:weight) to tags contained in the list based on the max_weight_value to a max of max_weight_tags
         If the weight is above 1 than the value should be between 1 and max_weight_value, otherwise it should be between max_weight_value and 1
@@ -565,7 +558,7 @@ class PromptRandomWeight:
                 words[i] = f"({words[i]}:{round(random.uniform(min_weight_value,max_weight_value),1)})"
         return (separator.join(words),)
 
-class PromptBackground:   
+class PromptBackground:
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
@@ -573,24 +566,24 @@ class PromptBackground:
                     "background_type": (["colored","b&w","remove"], {"default": "remove"}),
                     }
                 }
-        
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "prompt_background"
     CATEGORY = "Ranbooru Nodes"
-               
+
     def prompt_background(self, prompt, background_type):
         COLORED_BG = ['black_background', 'aqua_background', 'white_background', 'colored_background',
                     'blue_background', 'green_background', 'red_background',
                     'brown_background', 'purple_background', 'yellow_background', 'orange_background',
                     'pink_background', 'two-tone_background', 'grey_background']
         BW_BG = ['monochrome', 'greyscale', 'grayscale']
-        
+
         # Merge all background tags
         ALL_BG_TAGS = COLORED_BG + BW_BG
-        
+
         # Split prompt in tags
         tags = prompt.split(',')
-        
+
         if background_type == 'remove':
             # Remove all background tags
             tags = [tag.strip() for tag in tags if tag.strip() not in ALL_BG_TAGS]
@@ -604,31 +597,32 @@ class PromptBackground:
             tags = [tag.strip() for tag in tags if tag.strip() not in COLORED_BG]
             # Add all black and white tags
             tags.extend(BW_BG)
-        
+
         # Ricomponi i tag nel prompt
         final_prompt = ', '.join(tags)
-        
+
         return (final_prompt,)
-    
+
 class LockSeed:
     """Returns a random seed and stores it in self.prev_seed. If user selects 'use_last' it will return the same seed as before."""
     def __init__(self):
         self.prev_seed = None
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
                     "use_last": ("BOOLEAN", {"default": False}),
                     }
                 }
-        
-    def IS_CHANGED(self, **kwargs):
+
+    @staticmethod
+    def IS_CHANGED(**kwargs):
         return float('nan')
-    
+
     RETURN_TYPES = ("INT",)
     FUNCTION = "lock_seed"
     CATEGORY = "Ranbooru Nodes"
-    
+
     def lock_seed(self, use_last):
         if use_last and self.prev_seed != None:
             return (self.prev_seed,)
@@ -641,26 +635,27 @@ class TimestampFileName:
     """Given a filename input, returns a filename with a timestamp appended to it."""
     def __init__(self):
         pass
-    
+
     @classmethod
     def INPUT_TYPES(cls):
         return {"required": {
                     "filename": ("STRING", {"multiline": False, "default": ""}),
                     }
                 }
-        
-    def IS_CHANGED(self, **kwargs):
+
+    @staticmethod
+    def IS_CHANGED(**kwargs):
         return float('nan')
-        
+
     RETURN_TYPES = ("STRING",)
     FUNCTION = "timestamp_filename"
     CATEGORY = "Ranbooru Nodes"
-    
+
     def timestamp_filename(self, filename):
         now = datetime.datetime.now()
         timestamp = now.strftime("%Y%m%d_%H%M%S")
         return (f"{filename}_{timestamp}",)
-   
+
 # A dictionary that contains all nodes you want to export with their names
 # NOTE: names should be globally unique
 NODE_CLASS_MAPPINGS = {
