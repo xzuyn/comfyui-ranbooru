@@ -282,7 +282,7 @@ class Ranbooru:
                 add_tags += f'+rating:{RATINGS[booru][rating]}'
             data = api_url.get_data(add_tags, max_pages)
             random_post = data['post'][random.randint(0,len(data['post'])-1)]
-            clean_tags = random_post['tags'].replace('(','\(').replace(')','\)')
+            clean_tags = random_post['tags'].replace('(','\\(').replace(')','\\)')
             temp_tags = clean_tags.split(' ')
             temp_tags = random.sample(temp_tags, len(temp_tags))
             if change_color == 'Colored':
@@ -359,7 +359,7 @@ class RanbooruURL:
         else:
             # extract the id from the url
             # use regex to find the number after id=
-            id = re.search('id=(\d+)', url)
+            id = re.search(r'id=(\d+)', url)
             if id:
                 add_tags = f'&id={id.group(1)}'
             else:
@@ -367,7 +367,7 @@ class RanbooruURL:
 
         data = api_url.get_data(add_tags, 100)
         random_post = data['post'][0]
-        clean_tags = random_post['tags'].replace('(','\(').replace(')','\)')
+        clean_tags = random_post['tags'].replace('(','\\(').replace(')','\\)')
         temp_tags = clean_tags.split(' ')
         temp_tags = random.sample(temp_tags, len(temp_tags))
         final_tags = ','.join([tag for tag in temp_tags if tag not in bad_tags])
